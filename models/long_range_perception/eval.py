@@ -2,13 +2,14 @@ import tqdm
 import torch
 import torch.nn as nn
 
+import numpy as np
 from sklearn.metrics import roc_auc_score, roc_curve
 
 import seaborn as sns
 import matplotlib.pyplot as plt
 
-from model import SimpleCNN
-from utils import *
+from .model import SimpleCNN
+from .utils import *
 
 model  = torch.load('./model.pt', map_location=lambda storage, loc: storage)
 test_dl, test_ds = get_dl(np.arange(9, 11), H5_PATH, test=True)

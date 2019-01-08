@@ -1,10 +1,12 @@
 import torch
 
 import numpy as np
+from os import path
+
 from torch.utils.data import DataLoader
 from torchvision.transforms import Compose
-
-from data import PerceptionDataset
+from torchvision.transforms import Resize, Normalize, ToTensor
+from .data import PerceptionDataset
 import matplotlib.pyplot as plt
 
 BATCH_SIZE = 128
@@ -25,8 +27,12 @@ def un_normalize(x):
     x = (x - x.min()) / (x.max() - x.min())
     return x
 
-post_processing = Compose([un_normalize])
+def normalize(x):
 
+    return (x - x.mean()) / x.std()
+
+post_processing = Compose([un_normalize])
+pre_processing = Compose([Resize((64, 80)), ToTensor(), normalize])
 
 def imshow(tensor):
     tensor = tensor.squeeze()
@@ -34,3 +40,7 @@ def imshow(tensor):
     img = tensor.cpu().numpy()
     plt.imshow(img, cmap='gray')
     plt.show()
+
+MODEL_PATH = path.abspath('./model.pt')
+
+print(MODEL_PATH)
