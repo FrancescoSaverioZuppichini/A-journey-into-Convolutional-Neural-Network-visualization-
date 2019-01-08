@@ -40,7 +40,7 @@ class GradCam(Base):
     def clean(self):
         [h.remove() for h in self.handles]
 
-    def __call__(self, input_image, layer, guide=False, target_class=None, postprocessing=lambda x: x):
+    def __call__(self, input_image, layer, guide=False, target_class=None, postprocessing=lambda x: x, regression=False):
         self.clean()
         self.module.zero_grad()
 
@@ -58,11 +58,11 @@ class GradCam(Base):
         predictions = self.module(input_var)
 
         if target_class is None: values, target_class = torch.max(predictions, dim=1)
-
-        target = torch.zeros(predictions.size()).to(self.device)
-        target[0][target_class] = 1
-
-        predictions.backward(gradient=target, retain_graph=True)
+        if regression: predictions.backward(gradient=target_class, retain_graph=True)
+        else:
+            target = torch.zeros(predictions.size()).to(self.device)
+            target[0][target_class] = 1
+            predictions.backward(gradient=target, retain_graph=True)
 
         with torch.no_grad():
             avg_channel_grad = F.adaptive_avg_pool2d(self.gradients.data, 1)

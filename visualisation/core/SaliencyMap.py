@@ -42,8 +42,9 @@ class SaliencyMap(Base):
             if isinstance(module, ReLU):
                 self.handles.append(module.register_backward_hook(guide_relu))
 
-    def __call__(self, input_image, layer, guide=False, target_class=None):
+    def __call__(self, input_image, layer, guide=False, target_class=None, regression=False):
         self.stored_grad = False
+        self.module.zero_grad()
 
         self.clean()
         if guide: self.guide(self.module)
@@ -54,14 +55,15 @@ class SaliencyMap(Base):
 
         predictions = self.module(input_image)
 
-        if target_class == None: _, target_class = torch.max(predictions, dim=1)
+        if target_class is None: values, target_class = torch.max(predictions, dim=1)
 
-        one_hot_output = torch.zeros(predictions.size()).to(self.device)
-        one_hot_output[0][target_class] = 1
+        if regression:
+            predictions.backward(gradient=target_class, retain_graph=True)
+        else:
+            target = torch.zeros(predictions.size()).to(self.device)
+            target[0][target_class] = 1
+            predictions.backward(gradient=target, retain_graph=True)
 
-        self.module.zero_grad()
-
-        predictions.backward(gradient=one_hot_output)
 
         image = self.gradients.data.cpu().numpy()[0]
         #
