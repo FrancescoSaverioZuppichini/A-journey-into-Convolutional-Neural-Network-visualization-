@@ -33,7 +33,7 @@ def imshow(tensor):
 
 model.eval()
 
-vis = ClassActivationMapping(model.to(device), device)
+vis = GradCam(model.to(device), device)
 img = vis(input.to(device), None,
           target_class=None,
           postprocessing=image_net_postprocessing,
