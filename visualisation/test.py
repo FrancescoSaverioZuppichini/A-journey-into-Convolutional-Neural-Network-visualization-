@@ -14,7 +14,7 @@ device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
 # create a model
 model = resnet152(pretrained=True)
 # print(model)
-cat = Image.open("/Users/vaevictis/Desktop/cat.jpg")
+cat = Image.open("/home/francesco/Desktop/cat.jpg")
 # resize the image and make it a tensor
 input = Compose([Resize((224,224)), ToTensor(), image_net_preprocessing])(cat)
 # add 1 dim for batch

@@ -47,6 +47,6 @@ class ClassActivationMapping(Base):
         cam = cam.view(h, w)
 
         with torch.no_grad():
-            image_with_heatmap = tensor2cam(postprocessing(inputs.squeeze()), cam)
+            image_with_heatmap = tensor2cam(postprocessing(inputs.cpu().squeeze()), cam)
 
         return image_with_heatmap.unsqueeze(0), { 'prediction': target_class }

@@ -67,7 +67,8 @@ class GradCam(Base):
         with torch.no_grad():
             avg_channel_grad = F.adaptive_avg_pool2d(self.gradients.data, 1)
             self.cam = F.relu(torch.sum(self.conv_outputs[0] * avg_channel_grad[0], dim=0))
-            image_with_heatmap = tensor2cam(postprocessing(input_image.squeeze()), self.cam)
+
+            image_with_heatmap = tensor2cam(postprocessing(input_image.squeeze().cpu()), self.cam)
 
         self.clean()
 
