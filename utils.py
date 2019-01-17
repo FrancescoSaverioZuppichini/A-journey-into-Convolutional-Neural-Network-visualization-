@@ -60,6 +60,12 @@ def module2traced(module, inputs):
 
     return modules
 
+def run_vis_plot(vis, x, layer, ncols=1, nrows=1):
+    images, info = vis(x, layer)
+    images = images[: nrows*ncols]
+    print(images[0].shape)
+    subplot(images, tensor2img, title=str(layer), ncols=ncols, nrows=nrows)
+
 def run_vis_plot_across_models(modules, input, layer_id, Vis, title,
                                device,
                                inputs=None,
