@@ -903,6 +903,6 @@ Moreover, as a side project, I developed an interactive convolutional neural net
  All these visualizations are implemented using a common interface and there are available as [python module](https://github.com/FrancescoSaverioZuppichini/A-journey-into-Convolutional-Neural-Network-visualization-/tree/master/visualisation) so they can be used in any other module.
 
 
-Thank for reading
+Thank you for reading
 
 Francesco Saverio Zuppichini
