@@ -3,7 +3,11 @@
 *Francesco Saverio Zuppichini*
 
 There is one famous urban legend about computer vision. Around the 80s, the US military wanted to use neural networks to automatically detect camouflaged enemy tanks. They took a number of pictures of trees without tanks and then pictures with the same trees with tanks behind them.
-The results were impressive. So impressive that the army wanted to be sure the net had correctly generalized. They took new pictures of woods with and without tanks and they showed them again to the network. This time, the model performed terribly, it was not able to discriminate between pictures with tanks behind woods and just trees.It turned out that all the pictures without tanks were taken on a cloudy day while the ones with tanks on a sunny day! In reality, the network learn to recognize the weather, not the enemy tanks.
+The results were impressive. So impressive that the army wanted to be sure the net had correctly generalized. They took new pictures of woods with and without tanks and they showed them again to the network. This time, the model performed terribly, it was not able to discriminate between pictures with tanks behind woods and just trees.It turned out that all the pictures without tanks were taken on a cloudy day while the ones with tanks on a sunny day! In reality, the network learns to recognize the weather, not the enemy tanks.
+
+The source code can be found [here](https://github.com/FrancescoSaverioZuppichini/A-journey-into-Convolutional-Neural-Network-visualization-).
+
+This article is also available as an interactive [jupyter notebook](https://github.com/FrancescoSaverioZuppichini/A-journey-into-Convolutional-Neural-Network-visualization-/blob/master/notebook.ipynb)
 
 ## Nosce te ipsum
 
@@ -17,7 +21,7 @@ Our goal is not to explain in detail how each technique works since this is alre
 
 Later on, we show a workflow in which we utilize some of the techniques you will learn in this journey to test the robustness of a model, this is extremely useful to understand and fix its limitations.
 
-The curios reader could further improve is understand by looking and the [source code](https://github.com/FrancescoSaverioZuppichini/A-journey-into-Convolutional-Neural-Network-visualization-/tree/master/visualisation/core) for each visulisation and by reading the references.
+The curious reader could further improve is understand by looking and the [source code](https://github.com/FrancescoSaverioZuppichini/A-journey-into-Convolutional-Neural-Network-visualization-/tree/master/visualization/core) for each visulization and by reading the references.
 
 # Preambula
 
@@ -35,7 +39,7 @@ Let's start our journey by selecting a network. Our first model will be the old 
 
 ```python
 from torchvision.models import *
-from visualisation.core.utils import device
+from visualization.core.utils import device
 
 model = alexnet(pretrained=True).to(device)
 print(model)
@@ -99,7 +103,7 @@ import glob
 import matplotlib.pyplot as plt
 import numpy as np
 
-from visualisation.core.utils import device 
+from visualization.core.utils import device 
 from PIL import Image
 
 image_paths = glob.glob('./images/*.*')
@@ -123,8 +127,8 @@ Be aware that jupyter have not a garbage collected so we will need to manually f
 
 ```python
 from torchvision.transforms import ToTensor, Resize, Compose, ToPILImage
-from visualisation.core import *
-from visualisation.core.utils import image_net_preprocessing
+from visualization.core import *
+from visualization.core.utils import image_net_preprocessing
 
 inputs  = [Compose([Resize((224,224)), ToTensor(), image_net_preprocessing])(x).unsqueeze(0) for x in images]  # add 1 dim for batch
 inputs = [i.to(device) for i in inputs]
@@ -140,7 +144,7 @@ def free(modules):
     torch.cuda.empty_cache()
 ```
 
-As we said, `imagenet` is a huge dataset with `1000` classes, represented by an integer not very human interpetable. We can associate each class id to its label by loading the `imaganet2human.txt` and create a python dictionary.
+As we said, `imagenet` is a huge dataset with `1000` classes, represented by an integer not very human interpretable. We can associate each class id to its label by loading the `imaganet2human.txt` and create a python dictionary.
 
 
 ```python
@@ -221,7 +225,7 @@ run_vis_plot(vis, inputs[0], first_layer, ncols=4, nrows=4)
 ![png](resources/images/output_20_1.png)
 
 
-Let's stop for a minute to explain what those images represent. We traced the input through the computational graph in order to find out all the layers of our models, in this case, `alexnet`. Then we instantiate the `Weights` class implemented in `visualisation.core` and we call it by passing the current input, the **cat** image and a **target layer**. As outputs, we get all the current layer's weights as grey images. Then, we plot 16 of them. We can notice that they, in some way, makes sense; for example, some pixels are brighter in the edges of the images.
+Let's stop for a minute to explain what those images represent. We traced the input through the computational graph in order to find out all the layers of our models, in this case, `alexnet`. Then we instantiate the `Weights` class implemented in `visualization.core` and we call it by passing the current input, the **cat** image and a **target layer**. As outputs, we get all the current layer's weights as grey images. Then, we plot 16 of them. We can notice that they, in some way, makes sense; for example, some pixels are brighter in the edges of the images.
 
 Let's plot the first `MaxPool` layer to better see this effect, dimensional reduction and higher brightness pixels in some interesting areas. 
 
@@ -274,7 +278,7 @@ run_vis_plot(vis, inputs[1], deeper_layer, ncols=4, nrows=4)
 
 In this case, we have no idea of what is going on. It can be argued that weights visualization does not carry any useful information about the model, even if this is almost true, there is one nice reason of plotting the weights especially at the first layer.
 
-When a model is poorly trained or not trained at all, the first weights have lots of noise, since they are just randomly initialized, and they are a lot more similar to the inputs images than the trained ones. This feature can be useful to understand on the fly is a model is trained or not. However, except for this, weights visualization is not the way to go to understand what your black box is thinking. Below we plot the first layer's weight first for the untraind version of `alexnet` and the for the trained one. 
+When a model is poorly trained or not trained at all, the first weights have lots of noise, since they are just randomly initialized, and they are a lot more similar to the inputs images than the trained ones. This feature can be useful to understand on the fly is a model is trained or not. However, except for this, weights visualization is not the way to go to understand what your black box is thinking. Below we plot the first layer's weight first for the untrainded version of `alexnet` and the for the trained one. 
 
 
 ```python
@@ -330,7 +334,7 @@ free(modules)
 
 The `resnet` and `vgg` weights looks more similar to the input images than `alexnet`. But, again, what does it mean? Remember that at least resnet is initialized in a different way than the other two models.
 
-# Saliency Visualisation
+# Saliency visualization
 One idea proposed by [*Deep Inside Convolutional Networks: Visualising Image Classification Models and Saliency Maps*](https://arxiv.org/abs/1312.6034) is to back-prop the output of the network with respect to a target class until the input and plot the computed gradient. This will highligh the part of the image responsible for that class. Let's start with alexnet.
 
 Let's first print the prediction of the network (this could change if you re-run the cell)
@@ -347,11 +351,11 @@ print('predicted class {}'.format(imagenet2human[id.item()]))
     predicted class tiger cat
 
 
-Each visualisation is implemented in its own class. You can find the code [here](https://github.com/FrancescoSaverioZuppichini/A-journey-into-Convolutional-Neural-Network-visualization-/blob/master/visualisation/core/SaliencyMap.py). It will backproprop the output with respect to the one hot encoding representation of the number corresponding to `class tiger cat`
+Each visualization is implemented in its own class. You can find the code [here](https://github.com/FrancescoSaverioZuppichini/A-journey-into-Convolutional-Neural-Network-visualization-/blob/master/visualization/core/SaliencyMap.py). It will backproprop the output with respect to the one hot encoding representation of the number corresponding to `class tiger cat`
 
 
 ```python
-from visualisation.core.utils import image_net_postprocessing
+from visualization.core.utils import image_net_postprocessing
 model.eval()
 model = model.to(device)
 vis = SaliencyMap(model, device)
@@ -436,13 +440,13 @@ The Basilica is very interesting, all four networks correctly classify it as a `
 
 ![alt](./resources/images/class_activation_mapping1.png)
 
-The implementation can be found [here](https://github.com/FrancescoSaverioZuppichini/A-journey-into-Convolutional-Neural-Network-visualization-/blob/master/visualisation/core/ClassActivationMapping.py). We can pass to the visualisation a `target_class` parameter to get the relative weights from the fc layer.
+The implementation can be found [here](https://github.com/FrancescoSaverioZuppichini/A-journey-into-Convolutional-Neural-Network-visualization-/blob/master/visualization/core/ClassActivationMapping.py). We can pass to the visualization a `target_class` parameter to get the relative weights from the fc layer.
 
 Notice that by changing the target class, we can see different part of the image highlighted. The first image uses the prediction class, while the second an other type of `cat` and the last one  `bookcase`, just to see what the model will do with a wrong class. 
 
 
 ```python
-from visualisation.core.utils import imshow
+from visualization.core.utils import imshow
 # we are using resnet 34 since the model has only one fc layer before the softmax and it is preceded by av avg pool
 # as required from the paper
 module = resnet34(True).to(device)
@@ -518,7 +522,7 @@ They are all very similar as expected. One big drawback of this technique is tha
 
 ![alt](./resources/images/grad_cam1.png)
 
-The code is [here](https://github.com/FrancescoSaverioZuppichini/A-journey-into-Convolutional-Neural-Network-visualization-/blob/master/visualisation/core/GradCam.py)
+The code is [here](https://github.com/FrancescoSaverioZuppichini/A-journey-into-Convolutional-Neural-Network-visualization-/blob/master/visualization/core/GradCam.py)
 
 We can use it to higlight what different models are looking at.
 
@@ -546,7 +550,7 @@ Below we plot the same input for `resnet34` but we change the target class in ea
 
 
 ```python
-from visualisation.core.utils import imshow
+from visualization.core.utils import imshow
 
 module = module.to(device)
 
@@ -900,7 +904,7 @@ In this article, we present different convolutional neural network visualization
 
 Moreover, as a side project, I developed an interactive convolutional neural network visualization application called [mirro](https://github.com/FrancescoSaverioZuppichini/mirror) that receives in just a few days more than a hundred stars on GitHub reflecting the interest of the deep learning community on this topic.
 
- All these visualizations are implemented using a common interface and there are available as [python module](https://github.com/FrancescoSaverioZuppichini/A-journey-into-Convolutional-Neural-Network-visualization-/tree/master/visualisation) so they can be used in any other module.
+ All these visualizations are implemented using a common interface and there are available as [python module](https://github.com/FrancescoSaverioZuppichini/A-journey-into-Convolutional-Neural-Network-visualization-/tree/master/visualization) so they can be used in any other module.
 
 
 Thank you for reading
