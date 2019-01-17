@@ -110,7 +110,7 @@ subplot(images, title='inputs', rows_titles=['cat','san pietro','dog_cat'], nrow
 ```
 
 
-![png](output_9_0.png)
+![png](resources/images/output_9_0.png)
 
 
 Since all of our models were trained on [imagenet](http://www.image-net.org/), a huge dataset with `1000` different classes, we need to parse and normalize them.
@@ -217,7 +217,7 @@ run_vis_plot(vis, inputs[0], first_layer, ncols=4, nrows=4)
 
 
 
-![png](output_20_1.png)
+![png](resources/images/output_20_1.png)
 
 
 Let's stop for a minute to explain what those images represent. We traced the input through the computational graph in order to find out all the layers of our models, in this case, `alexnet`. Then we instantiate the `Weights` class implemented in `visualisation.core` and we call it by passing the current input, the **cat** image and a **target layer**. As outputs, we get all the current layer's weights as grey images. Then, we plot 16 of them. We can notice that they, in some way, makes sense; for example, some pixels are brighter in the edges of the images.
@@ -237,7 +237,7 @@ run_vis_plot(vis, inputs[0], first_maxpool_layer, ncols=4, nrows=4)
 
 
 
-![png](output_22_1.png)
+![png](resources/images/output_22_1.png)
 
 
 Let's try with an other input, the San Pietro Basilica
@@ -251,7 +251,7 @@ run_vis_plot(vis, inputs[1], first_maxpool_layer, ncols=4, nrows=4)
 
 
 
-![png](output_24_1.png)
+![png](resources/images/output_24_1.png)
 
 
 By looking at them, these images make somehow sense; they highlight the basilica layout but it is hard to understand what the model is actually doing. We got the idea that is computing something correctly but we could ask some questions, for example: is it looking at the cupola? Which are the most important features of the Basilica?
@@ -268,7 +268,7 @@ run_vis_plot(vis, inputs[1], deeper_layer, ncols=4, nrows=4)
 
 
 
-![png](output_26_1.png)
+![png](resources/images/output_26_1.png)
 
 
 In this case, we have no idea of what is going on. It can be argued that weights visualization does not carry any useful information about the model, even if this is almost true, there is one nice reason of plotting the weights especially at the first layer.
@@ -299,11 +299,11 @@ del alexnet_not_pretrained
 
 
 
-![png](output_28_1.png)
+![png](resources/images/output_28_1.png)
 
 
 
-![png](output_28_2.png)
+![png](resources/images/output_28_2.png)
 
 
 You can notice that in the first image is simpler to see the input image. Hoewer, this is not a general rule, but in some cases it can help.
@@ -324,7 +324,7 @@ free(modules)
 ```
 
 
-![png](output_31_0.png)
+![png](resources/images/output_31_0.png)
 
 
 The `resnet` and `vgg` weights looks more similar to the input images than `alexnet`. But, again, what does it mean? Remember that at least resnet is initialized in a different way than the other two models.
@@ -366,7 +366,7 @@ subplot([image_net_postprocessing(inputs[0].squeeze().cpu()), out],
 ```
 
 
-![png](output_37_0.png)
+![png](resources/images/output_37_0.png)
 
 
 We can see that `alexnet` gets exited on the cat. We can even do better! We can set to `0` each **negative** relu gradient when backprop. This is techinique is called `guided`.
@@ -384,7 +384,7 @@ subplot([image_net_postprocessing(inputs[0].squeeze().cpu()), out],
 ```
 
 
-![png](output_39_0.png)
+![png](resources/images/output_39_0.png)
 
 
 Now we can clearly see that the network is looking at the eyes and the nose of the cat. We can try to compare different models
@@ -399,7 +399,7 @@ free(modules)
 ```
 
 
-![png](output_41_0.png)
+![png](resources/images/output_41_0.png)
 
 
 `Alextnet` seems more interested to the eyes, while `VGG` looks at the ears and resnet is similar to `alexnet`. Now we can clearly understand which part of the inputs help the network gives that prediction.
@@ -425,7 +425,7 @@ free(modules)
 ```
 
 
-![png](output_43_0.png)
+![png](resources/images/output_43_0.png)
 
 
 The Basilica is very interesting, all four networks correctly classify it as a `dome` but only `resnet152` is more interested in the sky than on the cupola. In the last column, we have an image with two classes, `dog` and `cat`. All the networks highlighted booths, like the eyes of the dog and the ears of the cat in `vgg16`. What if we would like to discover only the region of the inputs that are related to a specific class? With this technique is impossible.
@@ -472,7 +472,7 @@ subplot(images,
 ```
 
 
-![png](output_47_0.png)
+![png](resources/images/output_47_0.png)
 
 
 It makes sense, the only thing is that in the last row we still have some part of the cat highlighted for `bookcase`
@@ -505,7 +505,7 @@ free(modules)
 
 
 
-![png](output_50_1.png)
+![png](resources/images/output_50_1.png)
 
 
 They are all very similar as expected. One big drawback of this technique is that force you to use a network with a specific architecture, global polling before the decoder part. The next technique generalize this approach by taking advantage of the gradient at one specific layer. Remember that with the *class activation* we are using the weights of the feature map as a scaling factor for the channels of the last layer. The features map must be before a softmax layer and right after the average pooling. The next technique propose a more general approach.
@@ -536,7 +536,7 @@ free(modules)
 ```
 
 
-![png](output_55_0.png)
+![png](resources/images/output_55_0.png)
 
 
 It is really interesting to see how `alexnet` looks at the nose, while `vgg` at the ears and `resnet` at the whole cat. It is interesting to see that the two `resnet` version looks at different part of the cat.
@@ -567,7 +567,7 @@ subplot(images,
 ```
 
 
-![png](output_57_0.png)
+![png](resources/images/output_57_0.png)
 
 
 Notice how similar to the `CAM` output they are. To better compore our three models, below we plot the grad cam for each input with respect to each model
@@ -596,7 +596,7 @@ free(modules)
 
 
 
-![png](output_59_1.png)
+![png](resources/images/output_59_1.png)
 
 
 The reader can immediately notice the difference across the models.
@@ -654,7 +654,7 @@ plt.imshow(crop)
 
 
 
-![png](output_64_1.png)
+![png](resources/images/output_64_1.png)
 
 
 *et voilà*! We can also change again class, and crop the interest region for that class.
@@ -679,7 +679,7 @@ plt.imshow(crop)
 
 
 
-![png](output_66_1.png)
+![png](resources/images/output_66_1.png)
 
 
 ## Different models
@@ -771,7 +771,7 @@ images, inputs = make_and_show_inputs('images/long_range_perception/*', pre_proc
 ```
 
 
-![png](output_73_0.png)
+![png](resources/images/output_73_0.png)
 
 
     Clipping input data to the valid range for imshow with RGB data ([0..1] for floats or [0..255] for integers).
@@ -781,7 +781,7 @@ images, inputs = make_and_show_inputs('images/long_range_perception/*', pre_proc
 
 
 
-![png](output_73_2.png)
+![png](resources/images/output_73_2.png)
 
 
 Then author normalize each image, this is done by callind `pre_processing`. For some reason the inpupts images are different on mac and ubuntu, they should not be like these if you run the notebook on mac the result is different. This is probably due to the warning message.
@@ -819,7 +819,7 @@ run_long_range_vis()
 ```
 
 
-![png](output_76_0.png)
+![png](resources/images/output_76_0.png)
 
 
 We can clearly see that the model looks at the objects. In the `GradCam` row, on the second picture, the plan is basically segmented by the heatmap. There is one problem, if you look at the third picture, the white box in front of the camera is not clearly highlighted. This is probably due to the white color of the floor that is very similar to the box's color. Let's investigate this problem. 
@@ -849,7 +849,7 @@ sns.heatmap(preds[2].view(-1, 5).detach().cpu().numpy())
 
 
 
-![png](output_78_1.png)
+![png](resources/images/output_78_1.png)
 
 
 If you compare with the authors pictures, my prediction are worse. This is due to the fact that to speed up everything I did not used all the training set and I did not perform any hyper paramater optimisation. All the code con be found [here](https://github.com/FrancescoSaverioZuppichini/A-journey-into-Convolutional-Neural-Network-visualization-/tree/master/models/long_range_perception). Let's now investigate the first problem, object with a similar color to the ground.
@@ -872,7 +872,7 @@ plt.show()
 ```
 
 
-![png](output_81_0.png)
+![png](resources/images/output_81_0.png)
 
 
 There are four different lights configuration and two differents cube colors, one equal to the ground and the second different. The first column represents a realistic situation, while the second has a really strong light from behind that generates a shadow in front of the camera. The third column has a shadow on the left and the last one has a little shadow on the left. 
@@ -888,7 +888,7 @@ run_long_range_vis()
 ```
 
 
-![png](output_83_0.png)
+![png](resources/images/output_83_0.png)
 
 
 The big black shadow in the second column definitly confuses the model. In the first and last column, the grad cam highlights better the corners of the red cube, especially in the first picture. We can definitely say that this model has some hard time with the object of the same colour as the ground. Thanks to this consideration, we could improve the number equal object/ground in the dataset, perform a better preprocessing, change the model structure etc and hopefully increase the robustness of the network.
